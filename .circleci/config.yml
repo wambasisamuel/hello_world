@@ -1,6 +1,7 @@
 version: 2.1
 orbs: 
-  welcome: circleci/welcome-orb@0.4.1
+  # welcome: circleci/welcome-orb@0.4.1
+  welcome: circleci/aws-cli@2.0.3
 
 jobs:
   my_job:
@@ -20,7 +21,7 @@ jobs:
             aws cloudformation deploy \
               --template-file template.yml \
               --stack-name CI-CD-Stack-${CIRCLE_WORKFLOW_ID:0:5} \
-              --region us-east-1
+              --region us-east-1 --profile UdacityLab
 
 workflows:
   my_workflow:
