@@ -2,24 +2,28 @@ version: 2.1
 orbs: 
   welcome: circleci/welcome-orb@0.4.1
 
-commands:
-  print_pipeline_id:
-    parameters:
-      id:
-        type: string
-    steps:
-      - run: echo << parameters.id >>
 jobs:
   my_job:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - run: exit 1
+      - checkout
+      - run: echo 'Hello World'
+  create_infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
       - run:
-          name: on error
-          command: echo "Hello Error"
-          when: on_fail
+          name: Create CloudFormation Stack
+          command: |
+            aws cloudformation deploy \
+              --template-file template.yml \
+              --stack-name CI-CD-Stack-${CIRCLE_WORKFLOW_ID:0:5} \
+              --region us-east-1
+
 workflows:
   my_workflow:
     jobs:
       - my_job
+      - create_infrastructure
